@@ -75,8 +75,8 @@ type requestInfo struct {
 	Method  string `json:"method"`
 	Path    string `json:"path"`
 	Headers M      `json:"headers"`
-	Query   M      `json:"query"`
-	Data    string `json:"data"`
-	Form    M      `json:"form"`
-	Body    M      `json:"body"`
+	Query   M      `json:"query,omitempty"`
+	Data    string `json:"data,omitempty"`
+	Form    M      `json:"form,omitempty"`
+	Body    M      `json:"body,omitempty"`
 }
