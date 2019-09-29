@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/isayme/go-httpecho/app/handler"
@@ -16,5 +17,5 @@ func main() {
 	http.HandleFunc("/version", handler.Version)
 	http.HandleFunc("/", handler.Echo)
 
-	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), nil))
 }
