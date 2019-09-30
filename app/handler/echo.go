@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"mime"
+	"net"
 	"net/http"
 	"net/url"
 
@@ -15,6 +16,12 @@ func Echo(w http.ResponseWriter, r *http.Request) {
 	resBody := requestInfo{
 		Method: r.Method,
 		Path:   r.RequestURI,
+		IP:     r.RemoteAddr,
+	}
+
+	// ip
+	if ip, _, err := net.SplitHostPort(r.RemoteAddr); err == nil {
+		resBody.IP = ip
 	}
 
 	// header
@@ -75,6 +82,7 @@ type requestInfo struct {
 	Method  string `json:"method"`
 	Path    string `json:"path"`
 	Headers M      `json:"headers"`
+	IP      string `json:"ip"`
 	Query   M      `json:"query,omitempty"`
 	Data    string `json:"data,omitempty"`
 	Form    M      `json:"form,omitempty"`
