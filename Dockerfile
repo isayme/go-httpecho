@@ -1,4 +1,4 @@
-FROM golang:1.11.1-alpine AS builder
+FROM golang:1.13.4-alpine AS builder
 
 ARG APP_PKG
 WORKDIR /go/src/${APP_PKG}
