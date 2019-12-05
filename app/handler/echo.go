@@ -21,7 +21,9 @@ func Echo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// ip
-	if ip, _, err := net.SplitHostPort(r.RemoteAddr); err == nil {
+	if ip := r.Header.Get("X-Real-IP"); ip != "" {
+		resBody.IP = ip
+	} else if ip, _, err := net.SplitHostPort(r.RemoteAddr); err == nil {
 		resBody.IP = ip
 	}
 
