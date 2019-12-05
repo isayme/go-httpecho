@@ -14,6 +14,7 @@ import (
 // Echo echo handler
 func Echo(w http.ResponseWriter, r *http.Request) {
 	resBody := requestInfo{
+		Proto:  r.Proto,
 		Method: r.Method,
 		Path:   r.RequestURI,
 		IP:     r.RemoteAddr,
@@ -79,6 +80,7 @@ func Echo(w http.ResponseWriter, r *http.Request) {
 type M map[string]interface{}
 
 type requestInfo struct {
+	Proto   string `json:"proto"`
 	Method  string `json:"method"`
 	Path    string `json:"path"`
 	Headers M      `json:"headers"`

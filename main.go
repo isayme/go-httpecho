@@ -17,5 +17,7 @@ func main() {
 	http.HandleFunc("/version", handler.Version)
 	http.HandleFunc("/", handler.Echo)
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), nil))
+	addr := fmt.Sprintf(":%d", *port)
+	log.Printf("listen %s ...\n", addr)
+	log.Fatal(http.ListenAndServe(addr, nil))
 }
