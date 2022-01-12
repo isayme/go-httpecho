@@ -10,6 +10,8 @@ import (
 )
 
 var port = flag.Uint("p", 3000, "listen port")
+var certFile = flag.String("cert_file", "", "cert file")
+var keyFile = flag.String("key_file", "", "key file")
 
 func main() {
 	flag.Parse()
@@ -18,6 +20,11 @@ func main() {
 	http.HandleFunc("/", handler.Echo)
 
 	addr := fmt.Sprintf(":%d", *port)
-	log.Printf("listen %s ...\n", addr)
-	log.Fatal(http.ListenAndServe(addr, nil))
+	if *certFile != "" && *keyFile != "" {
+		log.Printf("listen https %s ...\n", addr)
+		log.Fatal(http.ListenAndServeTLS(addr, *certFile, *keyFile, nil))
+	} else {
+		log.Printf("listen http %s ...\n", addr)
+		log.Fatal(http.ListenAndServe(addr, nil))
+	}
 }
