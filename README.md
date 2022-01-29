@@ -1,4 +1,4 @@
-# go-httpecho
+# httpecho
 
 [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/isayme/httpecho?sort=semver&style=flat-square)](https://hub.docker.com/r/isayme/httpecho)
 ![Docker Image Size (latest semver)](https://img.shields.io/docker/image-size/isayme/httpecho?sort=semver&style=flat-square)
