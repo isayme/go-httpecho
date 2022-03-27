@@ -9,6 +9,7 @@ import (
 	"net/url"
 
 	"github.com/isayme/go-httpecho/app"
+	"github.com/isayme/go-logger"
 )
 
 // Echo echo handler
@@ -75,6 +76,9 @@ func Echo(w http.ResponseWriter, r *http.Request) {
 	resHeader.Set(app.HeaderContentType, app.MIMEApplicationJSON)
 
 	data, _ := json.Marshal(resBody)
+
+	logger.Infof(string(data))
+
 	w.Write(data)
 }
 
