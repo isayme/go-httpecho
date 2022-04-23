@@ -1,16 +1,23 @@
-FROM golang:1.13.4-alpine AS builder
+FROM golang:1.17.9-alpine AS builder
+WORKDIR /app
 
-ARG APP_PKG
-WORKDIR /go/src/${APP_PKG}
+ARG APP_NAME
+ENV APP_NAME ${APP_NAME}
+ARG APP_VERSION
+ENV APP_VERSION ${APP_VERSION}
 
 COPY . .
 
-ARG APP_NAME
-ARG APP_VERSION
+RUN GO111MODULE=on go mod download
 RUN CGO_ENABLED=0 go build -ldflags "-X ${APP_PKG}/app.Name=${APP_NAME} -X ${APP_PKG}/app.Version=${APP_VERSION}" -o /app/httpecho main.go
 
 FROM alpine
 WORKDIR /app
+
+ARG APP_NAME
+ENV APP_NAME ${APP_NAME}
+ARG APP_VERSION
+ENV APP_VERSION ${APP_VERSION}
 
 COPY --from=builder /app/httpecho /app/httpecho
 
