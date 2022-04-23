@@ -9,7 +9,7 @@ ENV APP_VERSION ${APP_VERSION}
 COPY . .
 
 RUN GO111MODULE=on go mod download
-RUN CGO_ENABLED=0 go build -ldflags "-X ${APP_PKG}/app.Name=${APP_NAME} -X ${APP_PKG}/app.Version=${APP_VERSION}" -o /app/httpecho main.go
+RUN CGO_ENABLED=0 go build -ldflags "-X github.com/isayme/go-httpecho/app.Name=${APP_NAME} -X github.com/isayme/go-httpecho/app.Version=${APP_VERSION}" -o /app/httpecho main.go
 
 FROM alpine
 WORKDIR /app
