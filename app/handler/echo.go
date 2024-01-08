@@ -19,6 +19,7 @@ func Echo(w http.ResponseWriter, r *http.Request) {
 		Method: r.Method,
 		Path:   r.RequestURI,
 		IP:     r.RemoteAddr,
+		Host:   r.Host,
 	}
 
 	// ip
@@ -91,6 +92,7 @@ type requestInfo struct {
 	Path    string `json:"path"`
 	Headers M      `json:"headers"`
 	IP      string `json:"ip"`
+	Host    string `json:"host"`
 	Query   M      `json:"query,omitempty"`
 	Data    string `json:"data,omitempty"`
 	Form    M      `json:"form,omitempty"`
