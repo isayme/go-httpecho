@@ -80,7 +80,13 @@ func Echo(w http.ResponseWriter, r *http.Request) {
 
 	logger.Infof(string(data))
 
-	w.Write(data)
+	_, pretty := query["pretty"]
+	if pretty {
+		data, _ := json.MarshalIndent(resBody, "", "    ")
+		w.Write(data)
+	} else {
+		w.Write(data)
+	}
 }
 
 // M response object map
