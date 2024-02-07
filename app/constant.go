@@ -1,5 +1,8 @@
 package app
 
+// MAX_BYTES_READER max body read size
+const MAX_BYTES_READER = 1024 * 1024
+
 // HeaderContentType http header: Content-Type
 const HeaderContentType = "Content-Type"
 

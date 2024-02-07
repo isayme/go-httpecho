@@ -40,7 +40,7 @@ func Echo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// body
-	defer r.Body.Close()
+	r.Body = http.MaxBytesReader(w, r.Body, app.MAX_BYTES_READER)
 	rawBody, _ := io.ReadAll(r.Body)
 	resBody.Data = string(rawBody)
 	r.Body = io.NopCloser(bytes.NewBuffer(rawBody))
