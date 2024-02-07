@@ -8,3 +8,6 @@ const MIMEApplicationJSON = "application/json"
 
 // MIMEApplicationForm content type: form
 const MIMEApplicationForm = "application/x-www-form-urlencoded"
+
+// MIMEMultipartForm content type: form-data
+const MIMEMultipartForm = "multipart/form-data"
