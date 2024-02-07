@@ -1,12 +1,12 @@
 package handler
 
 import (
+	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"mime"
 	"net"
 	"net/http"
-	"net/url"
 
 	"github.com/isayme/go-httpecho/app"
 	"github.com/isayme/go-logger"
@@ -30,46 +30,53 @@ func Echo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// header
-	header := M{}
-	for k := range r.Header {
-		header[k] = r.Header.Get(k)
-	}
+	header := convert(r.Header)
 	resBody.Headers = header
 
 	// query
-	query := M{}
-	for k, v := range r.URL.Query() {
-		if len(v) > 1 {
-			query[k] = v
-		} else {
-			query[k] = v[0]
-		}
-	}
+	query := convert(r.URL.Query())
 	if len(query) > 0 {
 		resBody.Query = query
 	}
 
 	// body
-	rawBody, _ := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	rawBody, _ := io.ReadAll(r.Body)
 	resBody.Data = string(rawBody)
+	r.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	contentType := r.Header.Get(app.HeaderContentType)
 	mediaType, _, _ := mime.ParseMediaType(contentType)
+
 	if mediaType == app.MIMEApplicationJSON { // json
 		var body M
 		json.Unmarshal(rawBody, &body)
 		resBody.Body = body
 	} else if mediaType == app.MIMEApplicationForm { // form
+		r.ParseForm()
+		resBody.Form = convert(r.Form)
+	} else if mediaType == app.MIMEMultipartForm { // form-data
+		r.ParseMultipartForm(1024 * 1024)
+
 		form := M{}
-		formValues, _ := url.ParseQuery(string(rawBody))
-		for k, v := range formValues {
-			if len(v) > 1 {
-				form[k] = v
-			} else {
-				form[k] = v[0]
+		if r.MultipartForm != nil {
+			form["value"] = convert(r.MultipartForm.Value)
+
+			files := M{}
+			for k, v := range r.MultipartForm.File {
+				infos := []M{}
+				for _, file := range v {
+					info := M{}
+					info["filename"] = file.Filename
+					info["size"] = file.Size
+					infos = append(infos, info)
+				}
+
+				files[k] = infos
 			}
+			form["file"] = files
 		}
-		resBody.Form = form
+		resBody.MultipartForm = form
 	}
 
 	// json response
@@ -93,14 +100,27 @@ func Echo(w http.ResponseWriter, r *http.Request) {
 type M map[string]interface{}
 
 type requestInfo struct {
-	Proto   string `json:"proto"`
-	Method  string `json:"method"`
-	Path    string `json:"path"`
-	Headers M      `json:"headers"`
-	IP      string `json:"ip"`
-	Host    string `json:"host"`
-	Query   M      `json:"query,omitempty"`
-	Data    string `json:"data,omitempty"`
-	Form    M      `json:"form,omitempty"`
-	Body    M      `json:"body,omitempty"`
+	Proto         string `json:"proto"`
+	Method        string `json:"method"`
+	Path          string `json:"path"`
+	Headers       M      `json:"headers"`
+	IP            string `json:"ip"`
+	Host          string `json:"host"`
+	Query         M      `json:"query,omitempty"`
+	Data          string `json:"data,omitempty"`
+	Form          M      `json:"form,omitempty"`
+	MultipartForm M      `json:"multipartForm,omitempty"`
+	Body          M      `json:"body,omitempty"`
+}
+
+func convert(values map[string][]string) M {
+	m := M{}
+	for k, v := range values {
+		if len(v) > 1 {
+			m[k] = v
+		} else {
+			m[k] = v[0]
+		}
+	}
+	return m
 }
