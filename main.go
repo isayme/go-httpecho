@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 
-	"github.com/isayme/go-httpecho/app/handler"
+	handler "github.com/isayme/go-httpecho/app/handler"
 )
 
-var port = flag.Uint("p", 3000, "listen port")
+var port = flag.Uint64("p", 3000, "listen port")
 var certFile = flag.String("cert_file", "", "cert file")
 var keyFile = flag.String("key_file", "", "key file")
 
@@ -18,6 +20,15 @@ func main() {
 
 	http.HandleFunc("/version", handler.Version)
 	http.HandleFunc("/", handler.Echo)
+
+	envPort := os.Getenv("PORT")
+	if envPort != "" {
+		v, err := strconv.ParseUint(envPort, 10, 0)
+		if err != nil {
+			log.Fatalf("parse env PORT to uint failed: %v", err)
+		}
+		port = &v
+	}
 
 	addr := fmt.Sprintf(":%d", *port)
 	if *certFile != "" && *keyFile != "" {

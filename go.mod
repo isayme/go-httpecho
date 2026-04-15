@@ -1,6 +1,6 @@
 module github.com/isayme/go-httpecho
 
-go 1.17
+go 1.25
 
 require github.com/isayme/go-logger v0.3.1
 
